@@ -60,7 +60,7 @@ def extract_clsvec(bert_model, dataloader):
     return eval_results['hidden_state'], eval_results['labels']
 
 
-@hydra.main(config_path="/content/drive/MyDrive/GoogleColab/SA/ShortAnswer/BERT-SAS/configs", config_name="train_reg_config")
+@hydra.main(config_path="/content/drive/MyDrive/GoogleColab/dvrl/configs", config_name="train_reg")
 def main(cfg: DictConfig):
     tokenizer = AutoTokenizer.from_pretrained(cfg.model.model_name_or_path)
     bert = AutoModel.from_pretrained(cfg.model.model_name_or_path)
@@ -89,15 +89,15 @@ def main(cfg: DictConfig):
                                                 shuffle=False, 
                                                 drop_last=False, 
                                                 collate_fn=simple_collate_fn)
-    test_dataloader = torch.utils.data.DataLoader(dev_dataset, 
-                                                batch_size=cfg.training.batch_size, 
-                                                shuffle=False, 
-                                                drop_last=False, 
-                                                collate_fn=simple_collate_fn)
+    #test_dataloader = torch.utils.data.DataLoader(dev_dataset, 
+    #                                            batch_size=cfg.training.batch_size, 
+    #                                            shuffle=False, 
+    #                                            drop_last=False, 
+    #                                            collate_fn=simple_collate_fn)
 
     x_train, y_train = extract_clsvec(bert, train_dataloader)
     x_valid, y_valid = extract_clsvec(bert, dev_dataloader)
-    x_test, y_test = extract_clsvec(bert, test_dataloader)
+    #x_test, y_test = extract_clsvec(bert, test_dataloader)
 
 
     # Resets the graph
@@ -116,7 +116,7 @@ def main(cfg: DictConfig):
     parameters['inner_iterations'] = 100
     parameters['layer_number'] = 5
     parameters['batch_size'] = 2000
-    parameters['batch_size_predictor'] = 256
+    parameters['batch_size_predictor'] = 16
     parameters['learning_rate'] = 0.01
 
     # Defines predictive model
@@ -146,6 +146,6 @@ def main(cfg: DictConfig):
     dve_out = dvrl_class.data_valuator(x_train, y_train)
 
     # Predicts with DVRL
-    y_test_hat = dvrl_class.dvrl_predictor(x_test)
+    #y_test_hat = dvrl_class.dvrl_predictor(x_test)
 
     print('Finished data valuation.')
