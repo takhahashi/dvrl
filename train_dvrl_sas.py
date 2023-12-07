@@ -76,9 +76,9 @@ def main(cfg: DictConfig):
     with open(cfg.path.traindata_file_name) as f:
         train_dataf = json.load(f)
     train_dataset = get_dataset(train_dataf, cfg.sas.score_id, upper_score, cfg.model.reg_or_class, tokenizer)
-    with open(cfg.path.testdata_file_name) as f:
-        test_dataf = json.load(f)
-    test_dataset = get_dataset(test_dataf, cfg.sas.score_id, upper_score, cfg.model.reg_or_class, tokenizer)
+    #with open(cfg.path.testdata_file_name) as f:
+    #    test_dataf = json.load(f)
+    #test_dataset = get_dataset(test_dataf, cfg.sas.score_id, upper_score, cfg.model.reg_or_class, tokenizer)
 
     train_dataloader = torch.utils.data.DataLoader(train_dataset, 
                                                     batch_size=cfg.training.batch_size, 
