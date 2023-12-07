@@ -15,7 +15,7 @@ import torch
 
 from utils.loss_fnc import weighted_mse
 from data_loading import load_tabular_data, preprocess_data
-import dvrl
+import dvrl_torch
 from dvrl_metrics import remove_high_low
 from models import Predictor
 
@@ -130,7 +130,7 @@ def main(cfg: DictConfig):
     flags = {'sgd': True, 'pretrain': False}
 
     # Initializes DVRL
-    dvrl_class = dvrl.Dvrl(x_train, y_train, x_valid, y_valid,
+    dvrl_class = dvrl_torch.Dvrl(x_train, y_train, x_valid, y_valid,
                         problem, pred_model, dve_train_param, predictor_train_param)
 
     # Trains DVRL
