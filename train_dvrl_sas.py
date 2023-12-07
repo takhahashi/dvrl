@@ -13,7 +13,7 @@ import sys
 from omegaconf import DictConfig
 import torch
 
-from loss_fnc import weighted_mse
+from utils.loss_fnc import weighted_mse
 from data_loading import load_tabular_data, preprocess_data
 import dvrl
 from dvrl_metrics import remove_high_low
