@@ -17,7 +17,7 @@ from utils.loss_fnc import weighted_mse
 from data_loading import load_tabular_data, preprocess_data
 import dvrl_torch
 from dvrl_metrics import remove_high_low
-from models import Predictor
+from models.models import Predictor
 
 def simple_collate_fn(list_of_data):
   pad_max_len = torch.tensor(0)
