@@ -145,3 +145,6 @@ def main(cfg: DictConfig):
     #y_test_hat = dvrl_class.dvrl_predictor(x_test)
 
     print('Finished data valuation.')
+
+if __name__ == "__main__":
+    main()
