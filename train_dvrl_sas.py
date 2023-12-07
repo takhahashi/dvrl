@@ -13,10 +13,11 @@ import sys
 from omegaconf import DictConfig
 import torch
 
-
+from loss_fnc import weighted_mse
 from data_loading import load_tabular_data, preprocess_data
 import dvrl
 from dvrl_metrics import remove_high_low
+from models import Predictor
 
 def simple_collate_fn(list_of_data):
   pad_max_len = torch.tensor(0)
@@ -108,24 +109,19 @@ def main(cfg: DictConfig):
     problem = 'regression'
 
     # Network parameters
-    parameters = dict()
-    parameters['hidden_dim'] = 100
-    parameters['comb_dim'] = 10
-    parameters['iterations'] = 400
-    parameters['activation'] = tf.nn.relu
-    parameters['inner_iterations'] = 100
-    parameters['layer_number'] = 5
-    parameters['batch_size'] = 2000
-    parameters['batch_size_predictor'] = 16
-    parameters['learning_rate'] = 0.01
+    predictor_train_param = dict()
+    predictor_train_param['lr'] = 1e-5
+    predictor_train_param['criterion'] = weighted_mse
+    predictor_train_param['iterations'] = 4
+    predictor_train_param['batch_size'] = 16
+
+    dve_train_param = dict()
+    dve_train_param['lr'] = 1e-3
+    dve_train_param['iterations'] = 400
+    dve_train_param['batch_size'] = 1000
 
     # Defines predictive model
-    pred_model = keras.models.Sequential()
-    pred_model.add(keras.layers.Dense(parameters['hidden_dim'], activation='relu'))
-    pred_model.add(keras.layers.Dense(parameters['hidden_dim'], activation='relu'))
-    pred_model.add(keras.layers.Dense(1, activation='sigmoid'))
-    pred_model.compile(optimizer='adam', loss='mean_squared_error',
-                    metrics=['mae'])
+    pred_model = Predictor(len(x_train[0, :]), 'reg')
 
     # Sets checkpoint file name
     checkpoint_file_name = './tmp/model.ckpt'
@@ -135,7 +131,7 @@ def main(cfg: DictConfig):
 
     # Initializes DVRL
     dvrl_class = dvrl.Dvrl(x_train, y_train, x_valid, y_valid,
-                        problem, pred_model, parameters, checkpoint_file_name, flags)
+                        problem, pred_model, dve_train_param, predictor_train_param)
 
     # Trains DVRL
     dvrl_class.train_dvrl('mse')
