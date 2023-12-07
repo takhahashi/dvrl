@@ -49,7 +49,7 @@ def extract_clsvec(bert_model, dataloader):
                     'attention_mask':batch['attention_mask'],
                     'token_type_ids':batch['token_type_ids']}
 
-        cls_outputs = {k: v.to('cpu').detach().numpy().copy() for k, v in bert_model(x)['last_hidden_state'][:, 0, :]}
+        cls_outputs = {'hidden_state': bert_model(**x)['last_hidden_state'][:, 0, :].to('cpu').detach().numpy().copy()}
 
         if len(eval_results) == 0:
             eval_results.update(cls_outputs)
@@ -101,10 +101,6 @@ def main(cfg: DictConfig):
     #x_test, y_test = extract_clsvec(bert, test_dataloader)
 
 
-    # Resets the graph
-    tf.reset_default_graph()
-    keras.backend.clear_session()
-    
     # Defines problem
     problem = 'regression'
 
@@ -123,8 +119,6 @@ def main(cfg: DictConfig):
     # Defines predictive model
     pred_model = Predictor(len(x_train[0, :]), 'reg')
 
-    # Sets checkpoint file name
-    checkpoint_file_name = './tmp/model.ckpt'
 
     # Flags for using stochastic gradient descent / pre-trained model
     flags = {'sgd': True, 'pretrain': False}

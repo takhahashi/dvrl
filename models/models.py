@@ -31,7 +31,7 @@ class DataValueEstimater(nn.Module):
     
 class Predictor(nn.Module):
     def __init__(self, x_dim, output_type, output_dim=None):
-        super(DataValueEstimater, self).__init__()
+        super(Predictor, self).__init__()
         self.output_type = output_type
         self.layer1 = nn.Linear(x_dim, 100)  # 入力層から1つ目の隠れ層（64ユニット）
         self.layer2 = nn.Linear(100, 100)    # 1つ目の隠れ層から2つ目の隠れ層（128ユニット）
